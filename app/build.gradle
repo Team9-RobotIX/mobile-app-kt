@@ -21,6 +21,15 @@ android {
         }
     }
 }
+repositories{
+    maven { url "https://jitpack.io" }
+}
+
+kotlin {
+    experimental {
+        coroutines 'enable'
+    }
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -30,4 +39,11 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-core:0.20"
+    compile "org.jetbrains.kotlinx:kotlinx-coroutines-android:0.20"
+
+    /* kHTTP */
+    compile "com.github.jkcclemens:khttp:-SNAPSHOT"
+
 }
