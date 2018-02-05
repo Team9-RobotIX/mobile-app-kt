@@ -7,7 +7,17 @@ import kotlinx.android.synthetic.main.activity_joystick.*
 
 
 class JoystickActivity : BaseActivity() {
-    var lastAngle = 0
+
+    /* Range in degrees of what angle changes to ignore,
+     *  to prevent the robot from constantly correcting
+     *  by 1 degree or so
+     */
+    private val ANGLE_TOLERANCE = 5
+
+    /* Value in 1..100 at which the robot stops (joystick strength) */
+    private val STRENGTH_THRESHOLD = 35
+
+    private var lastAngle = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,24 +38,40 @@ class JoystickActivity : BaseActivity() {
 
 
     private fun processJoystickInput(angle: Int, strength: Int) {
+
+        /* If input is at 0, repeat last input with correct onOff */
+        if (angle == 0 && strength == 0) {
+            sendCommand(
+                    mapOf(
+                            "onOff" to (if (joystickMovementSwitch.isChecked) 1 else 0).toString(),
+                            "turnAngle" to lastAngle.toString()
+                    )
+            )
+            return
+        }
+
         /* Map to our angle format */
         val turnAngle =
                 when {
-                    strength == 0 -> lastAngle
+                    strength <= STRENGTH_THRESHOLD -> lastAngle
                     angle <= 90 -> 90 - angle
                     angle <= 269 -> -1 * (angle - 90)
                     else -> 180 - (angle - 270)
                 }
 
+        /* Don't send tiny changes in direction */
+        if (Math.abs(turnAngle - lastAngle) < ANGLE_TOLERANCE)
+            return
+
         lastAngle = turnAngle
 
-        println("Original: $angle, mapped: $turnAngle, str: $strength")
-
-        sendCommand(mapOf(
-                "onOff" to (if (strength != 0 || joystickMovementSwitch.isChecked) 1 else 0).toString(),
+        val args = mapOf(
+                "onOff" to (if (strength > STRENGTH_THRESHOLD || joystickMovementSwitch.isChecked) 1 else 0).toString(),
                 "turnAngle" to turnAngle.toString()
-        ))
+        )
 
+        sendCommand(args)
 
+        println("Original: $angle, mapped: $turnAngle, str: $strength, args: $args")
     }
 }
