@@ -3,9 +3,11 @@ package io.github.dkambersky.ktapp.activities
 import android.os.Bundle
 import io.github.controlwear.virtual.joystick.android.JoystickView
 import io.github.dkambersky.ktapp.R
+import kotlinx.android.synthetic.main.activity_joystick.*
 
 
 class JoystickActivity : BaseActivity() {
+    var lastAngle = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -15,25 +17,32 @@ class JoystickActivity : BaseActivity() {
 
         joystick.setOnMoveListener({ angle, strength -> processJoystickInput(angle, strength) }, 1000)
 
+        joystickMovementSwitch.setOnClickListener {
+            sendCommand(mapOf(
+                    "onOff" to (if (joystickMovementSwitch.isChecked) 1 else 0).toString(),
+                    "turnAngle" to lastAngle.toString()
+            ))
+        }
+
     }
 
 
     private fun processJoystickInput(angle: Int, strength: Int) {
-
-
-        /* Map to our format */
+        /* Map to our angle format */
         val turnAngle =
                 when {
-                    strength == 0 -> 0
+                    strength == 0 -> lastAngle
                     angle <= 90 -> 90 - angle
                     angle <= 269 -> -1 * (angle - 90)
                     else -> 180 - (angle - 270)
                 }
 
+        lastAngle = turnAngle
+
         println("Original: $angle, mapped: $turnAngle, str: $strength")
 
         sendCommand(mapOf(
-                "onOff" to (if (strength == 0) 0 else 1).toString(),
+                "onOff" to (if (strength != 0 || joystickMovementSwitch.isChecked) 1 else 0).toString(),
                 "turnAngle" to turnAngle.toString()
         ))
 
