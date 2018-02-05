@@ -1,13 +1,11 @@
-package io.github.dkambersky.ktapp
+package io.github.dkambersky.ktapp.activities
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
-import khttp.post
+import io.github.dkambersky.ktapp.R
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.experimental.launch
 
-class MainActivity : AppCompatActivity() {
-    val angleStep = 45.0
+class MainActivity : BaseActivity() {
+    private val angleStep = 45.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -16,11 +14,11 @@ class MainActivity : AppCompatActivity() {
         buttonOnOff.setOnClickListener { onOffPressed() }
         buttonLeft.setOnClickListener { rightPressed() }
         buttonRight.setOnClickListener { leftPressed() }
-
+        buttonJoystick.setOnClickListener { transition(JoystickActivity::class.java) }
     }
 
-    var onOff = 0
-    var angle = 0.0
+    private var onOff = 0
+    private var angle = 0.0
 
     private fun onOffPressed() {
         onOff = if (onOff == 0) 1 else 0
@@ -38,13 +36,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun sendCommand() {
-        launch {
-            post("http://robotix.james-odonnell.com/post",
-                    params = mapOf(
-                            "onOff" to onOff.toString(),
-                            "turnAngle" to angle.toString()
-                    )
-            )
-        }
+        sendCommand(mapOf(
+                "onOff" to onOff.toString(),
+                "turnAngle" to angle.toString()
+        ))
     }
 }

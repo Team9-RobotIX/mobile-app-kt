@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">KtApp</string>
+    <string name="title_activity_joystick">JoystickActivity</string>
 </resources>
