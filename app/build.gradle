@@ -50,5 +50,8 @@ dependencies {
     /* Joystick */
     compile 'io.github.controlwear:virtualjoystick:1.7.3'
 
+    /* Barcode scanning */
+    compile('eu.livotov.labs.android:CAMView:2.0.1@aar') { transitive = true }
+
 
 }

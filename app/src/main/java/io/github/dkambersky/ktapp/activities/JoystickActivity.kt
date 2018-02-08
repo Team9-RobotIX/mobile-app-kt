@@ -28,7 +28,7 @@ class JoystickActivity : BaseActivity() {
         joystick.setOnMoveListener({ angle, strength -> processJoystickInput(angle, strength) }, 1000)
 
         joystickMovementSwitch.setOnClickListener {
-            sendCommand(mapOf(
+            sendToServer(params = mapOf(
                     "onOff" to (if (joystickMovementSwitch.isChecked) 1 else 0).toString(),
                     "turnAngle" to lastAngle.toString()
             ))
@@ -41,8 +41,8 @@ class JoystickActivity : BaseActivity() {
 
         /* If input is at 0, repeat last input with correct onOff */
         if (angle == 0 && strength == 0) {
-            sendCommand(
-                    mapOf(
+            sendToServer(
+                    params = mapOf(
                             "onOff" to (if (joystickMovementSwitch.isChecked) 1 else 0).toString(),
                             "turnAngle" to lastAngle.toString()
                     )
@@ -70,7 +70,7 @@ class JoystickActivity : BaseActivity() {
                 "turnAngle" to turnAngle.toString()
         )
 
-        sendCommand(args)
+        sendToServer(params = args)
 
         println("Original: $angle, mapped: $turnAngle, str: $strength, args: $args")
     }
