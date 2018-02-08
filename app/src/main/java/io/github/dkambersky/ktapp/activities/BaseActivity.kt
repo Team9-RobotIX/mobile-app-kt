@@ -10,7 +10,10 @@ import android.view.View
 import android.view.Window
 import android.view.WindowManager
 import io.github.dkambersky.ktapp.FlobotApplication
+import khttp.get
 import khttp.post
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import java.io.Serializable
 
@@ -88,10 +91,14 @@ abstract class BaseActivity : AppCompatActivity() {
 
 
     /* Communication */
-    fun sendCommand(params: Map<String, String>) {
+    fun sendToServer(path: String = "/post", params: Map<String, String>) {
         launch {
-            post(flobotApp.postUrl, params = params)
+            post(flobotApp.serverUrl + path, params = params)
         }
+    }
+
+    fun readFromServer(path: String = ""): Deferred<String> {
+        return async { get(flobotApp.serverUrl + path).text }
     }
 
 }

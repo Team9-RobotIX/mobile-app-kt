@@ -15,6 +15,7 @@ class MainActivity : BaseActivity() {
         buttonLeft.setOnClickListener { rightPressed() }
         buttonRight.setOnClickListener { leftPressed() }
         buttonJoystick.setOnClickListener { transition(JoystickActivity::class.java) }
+        buttonScan.setOnClickListener { transition(ScanningActivity::class.java) }
     }
 
     private var onOff = 0
@@ -36,7 +37,7 @@ class MainActivity : BaseActivity() {
     }
 
     private fun sendCommand() {
-        sendCommand(mapOf(
+        sendToServer( params = mapOf(
                 "onOff" to onOff.toString(),
                 "turnAngle" to angle.toString()
         ))

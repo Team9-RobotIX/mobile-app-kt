@@ -11,7 +11,7 @@ import android.app.Application
  *
  */
 class FlobotApplication : Application() {
-    val postUrl = "http://ec2-18-219-63-23.us-east-2.compute.amazonaws.com/flaskapp/post"
+    val serverUrl = "http://ec2-18-219-63-23.us-east-2.compute.amazonaws.com/development"
     var inited = false
 
 
