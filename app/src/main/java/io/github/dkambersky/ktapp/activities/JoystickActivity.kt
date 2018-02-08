@@ -33,9 +33,7 @@ class JoystickActivity : BaseActivity() {
                     "turnAngle" to lastAngle.toString()
             ))
         }
-
     }
-
 
     private fun processJoystickInput(angle: Int, strength: Int) {
 
