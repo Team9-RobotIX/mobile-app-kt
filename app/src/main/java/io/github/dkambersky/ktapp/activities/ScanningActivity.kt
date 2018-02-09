@@ -24,8 +24,6 @@ class ScanningActivity : BaseActivity() {
         /* Set up scanner */
         camview.startScanner()
 
-        camview.setHudVisible(false)
-
         camview.scannerViewEventListener = object : BaseScannerViewEventListener(this) {
             override fun onCodeScanned(data: String) {
 
