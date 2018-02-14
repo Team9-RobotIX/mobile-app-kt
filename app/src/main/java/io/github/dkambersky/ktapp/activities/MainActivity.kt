@@ -16,6 +16,7 @@ class MainActivity : BaseActivity() {
         buttonRight.setOnClickListener { leftPressed() }
         buttonJoystick.setOnClickListener { transition(JoystickActivity::class.java) }
         buttonScan.setOnClickListener { transition(ScanningActivity::class.java) }
+        buttonLogin.setOnClickListener { toggleVisibility(login_form) }
     }
 
     private var onOff = 0
