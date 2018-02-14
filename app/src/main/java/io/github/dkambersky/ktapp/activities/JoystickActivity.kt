@@ -8,12 +8,6 @@ import kotlinx.android.synthetic.main.activity_joystick.*
 
 class JoystickActivity : BaseActivity() {
 
-    /* Range in degrees of what angle changes to ignore,
-     *  to prevent the robot from constantly correcting
-     *  by 1 degree or so
-     */
-    private val ANGLE_TOLERANCE = 5
-
     /* Value in 1..100 at which the robot stops (joystick strength) */
     private val STRENGTH_THRESHOLD = 35
 
@@ -58,7 +52,7 @@ class JoystickActivity : BaseActivity() {
                 }
 
         /* Don't send tiny changes in direction */
-        if (Math.abs(turnAngle - lastAngle) < ANGLE_TOLERANCE)
+        if (Math.abs(turnAngle - lastAngle) < Companion.ANGLE_TOLERANCE)
             return
 
         lastAngle = turnAngle
@@ -71,5 +65,13 @@ class JoystickActivity : BaseActivity() {
         sendToServer(params = args)
 
         println("Original: $angle, mapped: $turnAngle, str: $strength, args: $args")
+    }
+
+    companion object {
+        /* Range in degrees of what angle changes to ignore,
+                 *  to prevent the robot from constantly correcting
+                 *  by 1 degree or so
+                 */
+        private val ANGLE_TOLERANCE = 5
     }
 }

@@ -2,6 +2,7 @@ package io.github.dkambersky.ktapp.activities
 
 import android.os.Bundle
 import io.github.dkambersky.ktapp.R
+import khttp.post
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
@@ -17,6 +18,18 @@ class MainActivity : BaseActivity() {
         buttonJoystick.setOnClickListener { transition(JoystickActivity::class.java) }
         buttonScan.setOnClickListener { transition(ScanningActivity::class.java) }
         buttonLogin.setOnClickListener { toggleVisibility(login_form) }
+        email_sign_in_button.setOnClickListener { toggleVisibility(login_form); trySigningIn() }
+    }
+
+    private fun trySigningIn() {
+        val token = post(flobotApp.serverUrl+"/login",
+                mapOf(
+                        "username" to email.text.toString(),
+                        "password" to password.text.toString()
+                        )
+        ).text
+
+        showSnackbar(token)
     }
 
     private var onOff = 0
