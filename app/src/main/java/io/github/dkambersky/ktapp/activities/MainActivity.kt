@@ -6,16 +6,11 @@ import khttp.post
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : BaseActivity() {
-    private val angleStep = 45.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        buttonOnOff.setOnClickListener { onOffPressed() }
-        buttonLeft.setOnClickListener { rightPressed() }
-        buttonRight.setOnClickListener { leftPressed() }
-        buttonJoystick.setOnClickListener { transition(JoystickActivity::class.java) }
         buttonScan.setOnClickListener { transition(ScanningActivity::class.java) }
         buttonLogin.setOnClickListener { toggleVisibility(login_form) }
         email_sign_in_button.setOnClickListener { toggleVisibility(login_form); trySigningIn() }
@@ -32,28 +27,5 @@ class MainActivity : BaseActivity() {
         showSnackbar(token)
     }
 
-    private var onOff = 0
-    private var angle = 0.0
 
-    private fun onOffPressed() {
-        onOff = if (onOff == 0) 1 else 0
-        sendCommand()
-    }
-
-    private fun rightPressed() {
-        angle -= angleStep
-        sendCommand()
-    }
-
-    private fun leftPressed() {
-        angle += angleStep
-        sendCommand()
-    }
-
-    private fun sendCommand() {
-        sendToServer( params = mapOf(
-                "onOff" to onOff.toString(),
-                "turnAngle" to angle.toString()
-        ))
-    }
 }
