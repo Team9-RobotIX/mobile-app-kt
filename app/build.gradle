@@ -48,10 +48,12 @@ dependencies {
     /* kHTTP */
     compile "com.github.jkcclemens:khttp:-SNAPSHOT"
 
-    /* Joystick */
-    compile 'io.github.controlwear:virtualjoystick:1.7.3'
 
     /* Barcode scanning */
     compile('eu.livotov.labs.android:CAMView:2.0.1@aar') { transitive = true }
+
+    /* Jackson - JSON */
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.3'
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.+"
 
 }

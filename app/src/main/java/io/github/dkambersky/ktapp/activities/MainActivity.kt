@@ -14,6 +14,7 @@ class MainActivity : BaseActivity() {
         buttonScan.setOnClickListener { transition(ScanningActivity::class.java) }
         buttonLogin.setOnClickListener { toggleVisibility(login_form) }
         email_sign_in_button.setOnClickListener { toggleVisibility(login_form); trySigningIn() }
+        buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
     }
 
     private fun trySigningIn() {
