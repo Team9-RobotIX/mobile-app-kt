@@ -36,7 +36,7 @@ class CreateOrderActivity : BaseActivity() {
                 checkSendability()
             }
         }
-        spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+        spinnerFrom.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 buttonSendOrder.isEnabled = false
             }
@@ -48,7 +48,7 @@ class CreateOrderActivity : BaseActivity() {
 
         // Asynchronously load available targets
         launch { initializeSpinners() }
-        
+
     }
 
 
@@ -98,8 +98,8 @@ class CreateOrderActivity : BaseActivity() {
 
         launch {
             async.post(
-//                    flobotApp.serverUrl + "/deliveries",
-                    "http://httpbin.org/post", // Debugging bin
+                    flobotApp.serverUrl + "/deliveries",
+//                    "http://httpbin.org/post", // Debugging bin
                     json = mapOf
                     (
                             "name" to editTextName.text.toString(),
@@ -118,6 +118,7 @@ class CreateOrderActivity : BaseActivity() {
                     println("Error creating order!\n$statusCode $text")
 
             }
+            /* This might be more important than it looks - async weirdness */
             println("Order should be sent")
 
 
