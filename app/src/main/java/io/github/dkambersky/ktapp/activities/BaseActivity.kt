@@ -101,4 +101,6 @@ abstract class BaseActivity : AppCompatActivity() {
         return async { get(flobotApp.serverUrl + path).text }
     }
 
+
+
 }

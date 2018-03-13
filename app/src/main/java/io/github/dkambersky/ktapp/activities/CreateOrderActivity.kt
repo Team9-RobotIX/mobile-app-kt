@@ -12,14 +12,11 @@ import khttp.async
 import khttp.get
 import khttp.patch
 import kotlinx.android.synthetic.main.activity_create_order.*
+import kotlinx.android.synthetic.main.activity_track_order.*
 import kotlinx.coroutines.experimental.launch
 
 class CreateOrderActivity : BaseActivity() {
     private var targets = mutableListOf<DeliveryTarget>()
-
-    /* Hacky implementation for a demo, will be refactored for M3 */
-    private var waiting = false
-    private var canConfirm = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,7 +126,7 @@ class CreateOrderActivity : BaseActivity() {
             {
                 println("Got response")
                 if (statusCode == 200) {
-                    println("Order successfully created! $jsonArray")
+                    println("Order successfully created! $jsonObject")
                     transition(TrackOrderActivity::class.java,
                             "order" to text)
                 } else
@@ -141,4 +138,8 @@ class CreateOrderActivity : BaseActivity() {
 
         }
     }
+
+
+
+
 }

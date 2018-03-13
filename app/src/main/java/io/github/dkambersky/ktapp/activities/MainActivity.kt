@@ -17,7 +17,7 @@ class MainActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        buttonScan.setOnClickListener { transition(ScanningActivity::class.java) }
+
         buttonLogin.setOnClickListener { toggleVisibility(login_form) }
         email_sign_in_button.setOnClickListener { toggleVisibility(login_form); trySigningIn() }
         buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
@@ -25,7 +25,7 @@ class MainActivity : BaseActivity() {
 
         /* Disable creating order and scanning w/o login */
         buttonCreateOrder.isEnabled = false
-        buttonScan.isEnabled = false
+
 
         authStatusText.text = flobotApp.auth.loggedInFriendlyText()
 
@@ -60,10 +60,7 @@ class MainActivity : BaseActivity() {
 
 
                     /* Enable user-dependent actions */
-                    this@MainActivity.runOnUiThread {
-                        buttonCreateOrder.isEnabled = true
-                        buttonScan.isEnabled = true
-                    }
+                    this@MainActivity.runOnUiThread { buttonCreateOrder.isEnabled = true }
                 }
                 401 -> {
                     showSnackbar("Wrong username or password")

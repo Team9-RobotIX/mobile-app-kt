@@ -25,26 +25,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".activities.JoystickActivity"
-            android:label="@string/title_activity_joystick"
-            android:parentActivityName=".activities.MainActivity"
-            android:theme="@style/AppTheme.NoActionBar">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.github.dkambersky.ktapp.activities.MainActivity" />
-        </activity>
-        <activity android:name=".activities.ScanningActivity" />
-        <activity
-            android:name=".LoginActivity"
-            android:label="@string/title_activity_login"
-            android:parentActivityName=".activities.MainActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="io.github.dkambersky.ktapp.activities.MainActivity" />
-        </activity>
         <activity android:name=".activities.CreateOrderActivity" />
-        <activity android:name=".activities.TrackOrderActivity"></activity>
+        <activity android:name=".activities.TrackOrderActivity" />
     </application>
 
 </manifest>
