@@ -19,14 +19,19 @@ class MainActivity : BaseActivity() {
 
         buttonScan.setOnClickListener { transition(ScanningActivity::class.java) }
         buttonLogin.setOnClickListener { toggleVisibility(login_form) }
-        email_sign_in_button.setOnClickListener { toggleVisibility(login_form); trySigningIn() }
+        email_sign_in_button.setOnClickListener {
+            toggleVisibility(login_form)
+            if (!flobotApp.auth.loggedIn)
+                trySigningIn()
+
+             }
         buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
 
         authStatusText.text = flobotApp.auth.loggedInFriendlyText()
 
     }
 
-    private fun trySigningIn() {
+    private fun trySigningIn(){
         /* Hide keyboard - android APIs for this are a bloody mess */
         hideKeyboardFrom(name)
         hideKeyboardFrom(password)
