@@ -1,7 +1,7 @@
 package io.github.dkambersky.ktapp
 
 import android.app.Application
-import io.github.dkambersky.ktapp.data.LoginState
+import io.github.dkambersky.ktapp.data.AuthState
 
 /**
  * Stores global information to avoid the overhead
@@ -12,9 +12,6 @@ import io.github.dkambersky.ktapp.data.LoginState
  *
  */
 class FlobotApplication : Application() {
-    val serverUrl = "http://ec2-18-219-63-23.us-east-2.compute.amazonaws.com/development"
-    val loginState = LoginState()
-    var inited = false
-
-
+    val serverUrl = "http://ec2-18-219-63-23.us-east-2.compute.amazonaws.com/production"
+    val auth = AuthState()
 }

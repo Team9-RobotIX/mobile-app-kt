@@ -10,11 +10,16 @@ import io.github.dkambersky.ktapp.R
 import io.github.dkambersky.ktapp.data.DeliveryTarget
 import khttp.async
 import khttp.get
+import khttp.patch
 import kotlinx.android.synthetic.main.activity_create_order.*
 import kotlinx.coroutines.experimental.launch
 
 class CreateOrderActivity : BaseActivity() {
     private var targets = mutableListOf<DeliveryTarget>()
+
+    /* Hacky implementation for a demo, will be refactored for M3 */
+    private var waiting = false
+    private var canConfirm = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,9 +27,11 @@ class CreateOrderActivity : BaseActivity() {
 
         /* Disable send button initially */
         buttonSendOrder.isEnabled = false
+        toggleVisibility(buttonConfirmDelivery)
 
         /* Listeners*/
         buttonSendOrder.setOnClickListener { println("Send pressed"); sendOrder() }
+        buttonConfirmDelivery.setOnClickListener { confirmDelivery() }
         editTextName.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
         editTextDescription.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
         spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -51,6 +58,12 @@ class CreateOrderActivity : BaseActivity() {
 
     }
 
+    private fun confirmDelivery() {
+        launch {
+            patch(flobotApp.serverUrl + "/deliveries/")
+        }
+    }
+
 
     /* Disable Send Order button on invalid input */
     private fun checkSendability() {
@@ -64,7 +77,7 @@ class CreateOrderActivity : BaseActivity() {
         println(buttonSendOrder.isEnabled)
     }
 
-    /* Fetch data about targets, populate dropowns */
+    /* Fetch data about targets, populate dropdowns */
     private fun initializeSpinners() {
         launch {
             /* Haha, what is a pull parser?
@@ -98,8 +111,8 @@ class CreateOrderActivity : BaseActivity() {
 
         launch {
             async.post(
-                    flobotApp.serverUrl + "/deliveries",
-//                    "http://httpbin.org/post", // Debugging bin
+                    "http://httpbin.org/post", // Debugging bin
+                    //                    flobotApp.serverUrl + "/deliveries",
                     json = mapOf
                     (
                             "name" to editTextName.text.toString(),
@@ -108,7 +121,8 @@ class CreateOrderActivity : BaseActivity() {
                             "from" to (spinnerFrom.selectedItem as DeliveryTarget).id,
                             "to" to (spinnerTo.selectedItem as DeliveryTarget).id
                     ),
-                    timeout = 1.0
+                    timeout = 1.0,
+                    headers = mapOf("Authorization" to flobotApp.auth.token!!)
             )
             {
                 println("Got response")

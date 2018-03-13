@@ -1,9 +1,15 @@
 package io.github.dkambersky.ktapp.activities
 
+import android.app.Activity
 import android.os.Bundle
+import android.support.design.widget.Snackbar
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import io.github.dkambersky.ktapp.R
 import khttp.post
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.coroutines.experimental.launch
+
 
 class MainActivity : BaseActivity() {
 
@@ -15,17 +21,52 @@ class MainActivity : BaseActivity() {
         buttonLogin.setOnClickListener { toggleVisibility(login_form) }
         email_sign_in_button.setOnClickListener { toggleVisibility(login_form); trySigningIn() }
         buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
+
+        authStatusText.text = flobotApp.auth.loggedInFriendlyText()
+
     }
 
     private fun trySigningIn() {
-        val token = post(flobotApp.serverUrl+"/login",
-                mapOf(
-                        "username" to email.text.toString(),
-                        "password" to password.text.toString()
-                        )
-        ).text
+        /* Hide keyboard - android APIs for this are a bloody mess */
+        hideKeyboardFrom(name)
+        hideKeyboardFrom(password)
 
-        showSnackbar(token)
+        launch {
+            val uName = name.text.toString()
+            val response = post(flobotApp.serverUrl + "/login",
+                    json = mapOf(
+                            "username" to uName,
+                            "password" to password.text.toString()
+                    )
+            )
+
+            when (response.statusCode) {
+                200 -> {
+                    /* Extract bearer token */
+                    val token = response.jsonObject.get("bearer") as String
+
+                    /* Save login data */
+                    flobotApp.auth.name = uName
+                    flobotApp.auth.loggedIn = true
+                    flobotApp.auth.token = token
+
+                    /* Inform the user */
+                    showSnackbar("Logged in successfully!", Snackbar.LENGTH_LONG)
+                    println("Successfully authenticated as $uName, token $token")
+                }
+                401 -> {
+                    showSnackbar("Wrong username or password")
+                }
+
+            }
+            this@MainActivity.runOnUiThread({ authStatusText.text = flobotApp.auth.loggedInFriendlyText() })
+
+        }
+    }
+
+    private fun hideKeyboardFrom(view: View) {
+        val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
 
