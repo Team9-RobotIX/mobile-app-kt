@@ -4,16 +4,13 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.dkambersky.ktapp.R
 import io.github.dkambersky.ktapp.data.DeliveryTarget
 import khttp.async
 import khttp.get
-import khttp.patch
 import kotlinx.android.synthetic.main.activity_create_order.*
-import kotlinx.android.synthetic.main.activity_track_order.*
 import kotlinx.coroutines.experimental.launch
 
 class CreateOrderActivity : BaseActivity() {
@@ -25,14 +22,11 @@ class CreateOrderActivity : BaseActivity() {
 
         /* Disable send button initially */
         buttonSendOrder.isEnabled = false
-        toggleVisibility(buttonConfirmDelivery)
+
 
         /* Listeners*/
         buttonSendOrder.setOnClickListener { println("Send pressed"); sendOrder() }
-        buttonConfirmDelivery.setOnClickListener {
-            confirmDelivery()
-            Toast.makeText(this, "Delivery confirmed.", Toast.LENGTH_SHORT).show()
-        }
+
         editTextName.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
         editTextDescription.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
         spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -57,12 +51,6 @@ class CreateOrderActivity : BaseActivity() {
         // Asynchronously load available targets
         launch { initializeSpinners() }
 
-    }
-
-    private fun confirmDelivery() {
-        launch {
-            patch(flobotApp.serverUrl + "/deliveries/")
-        }
     }
 
 
