@@ -22,6 +22,11 @@ class MainActivity : BaseActivity() {
         email_sign_in_button.setOnClickListener { toggleVisibility(login_form); trySigningIn() }
         buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
 
+
+        /* Disable creating order and scanning w/o login */
+        buttonCreateOrder.isEnabled = false
+        buttonScan.isEnabled = false
+
         authStatusText.text = flobotApp.auth.loggedInFriendlyText()
 
     }
@@ -52,7 +57,13 @@ class MainActivity : BaseActivity() {
 
                     /* Inform the user */
                     showSnackbar("Logged in successfully!", Snackbar.LENGTH_LONG)
-                    println("Successfully authenticated as $uName, token $token")
+
+
+                    /* Enable user-dependent actions */
+                    this@MainActivity.runOnUiThread {
+                        buttonCreateOrder.isEnabled = true
+                        buttonScan.isEnabled = true
+                    }
                 }
                 401 -> {
                     showSnackbar("Wrong username or password")
