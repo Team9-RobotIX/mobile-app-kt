@@ -12,6 +12,6 @@ import io.github.dkambersky.ktapp.data.AuthState
  *
  */
 class FlobotApplication : Application() {
-    val serverUrl = "http://ec2-18-219-63-23.us-east-2.compute.amazonaws.com/production"
+    val serverUrl = "http://ec2-18-219-63-23.us-east-2.compute.amazonaws.com/development"
     val auth = AuthState()
 }

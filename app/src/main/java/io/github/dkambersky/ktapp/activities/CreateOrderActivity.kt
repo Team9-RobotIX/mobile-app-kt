@@ -111,30 +111,33 @@ class CreateOrderActivity : BaseActivity() {
 
         launch {
             async.post(
-                    "http://httpbin.org/post", // Debugging bin
-                    //                    flobotApp.serverUrl + "/deliveries",
+//                    "http://httpbin.org/post", // Debugging bin
+                    flobotApp.serverUrl + "/deliveries",
                     json = mapOf
                     (
                             "name" to editTextName.text.toString(),
                             "description" to editTextDescription.text.toString(),
                             "priority" to 0,
                             "from" to (spinnerFrom.selectedItem as DeliveryTarget).id,
-                            "to" to (spinnerTo.selectedItem as DeliveryTarget).id
+                            "to" to (spinnerTo.selectedItem as DeliveryTarget).id,
+                            "sender" to flobotApp.auth.name,
+                            "receiver" to "rms"
                     ),
                     timeout = 1.0,
-                    headers = mapOf("Authorization" to flobotApp.auth.token!!)
+                    headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token!!}")
             )
             {
                 println("Got response")
-                if (statusCode == 200)
-                    println("Order successfully created!")
-                else
+                if (statusCode == 200) {
+                    println("Order successfully created! $jsonArray")
+                    transition(TrackOrderActivity::class.java,
+                            "order" to text)
+                } else
                     println("Error creating order!\n$statusCode $text")
 
             }
             /* This might be more important than it looks - async weirdness */
             println("Order should be sent")
-
 
         }
     }

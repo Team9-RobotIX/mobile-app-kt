@@ -43,7 +43,8 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.dkambersky.ktapp.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.CreateOrderActivity"></activity>
+        <activity android:name=".activities.CreateOrderActivity" />
+        <activity android:name=".activities.TrackOrderActivity"></activity>
     </application>
 
 </manifest>
