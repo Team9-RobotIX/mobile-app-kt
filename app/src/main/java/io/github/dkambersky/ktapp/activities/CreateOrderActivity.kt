@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.dkambersky.ktapp.R
@@ -31,7 +32,10 @@ class CreateOrderActivity : BaseActivity() {
 
         /* Listeners*/
         buttonSendOrder.setOnClickListener { println("Send pressed"); sendOrder() }
-        buttonConfirmDelivery.setOnClickListener { confirmDelivery() }
+        buttonConfirmDelivery.setOnClickListener {
+            confirmDelivery()
+            Toast.makeText(this, "Delivery confirmed.", Toast.LENGTH_SHORT).show()
+        }
         editTextName.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
         editTextDescription.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
         spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {

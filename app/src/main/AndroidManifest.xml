@@ -18,13 +18,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.MainActivity">
+        <activity
+            android:name=".activities.MainActivity"
+            android:label="FloBot">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activities.CreateOrderActivity"
+            android:label="Create Order">
+        </activity>
+        <activity
+            android:name=".activities.ScanningActivity"
+            android:label="Scan QR Code">
+        </activity>
+
         <activity
             android:name=".activities.JoystickActivity"
             android:label="@string/title_activity_joystick"
@@ -34,7 +45,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.dkambersky.ktapp.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.ScanningActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login"
@@ -43,8 +53,12 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="io.github.dkambersky.ktapp.activities.MainActivity" />
         </activity>
-        <activity android:name=".activities.CreateOrderActivity" />
-        <activity android:name=".activities.TrackOrderActivity"></activity>
+        <activity
+            android:name=".activities.TrackOrderActivity"
+            android:label="Track your order"
+            >
+
+        </activity>
     </application>
 
 </manifest>
