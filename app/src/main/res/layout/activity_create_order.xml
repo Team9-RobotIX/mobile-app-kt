@@ -52,9 +52,11 @@
 
     <Spinner
         android:id="@+id/spinnerTo"
-        android:layout_width="368dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
-        android:background="@android:color/holo_orange_dark"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:background="@color/colorPrimaryDark"
         app:layout_constraintBottom_toTopOf="@+id/buttonSendOrder"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -63,9 +65,11 @@
 
     <Spinner
         android:id="@+id/spinnerFrom"
-        android:layout_width="368dp"
+        android:layout_width="0dp"
         android:layout_height="40dp"
-        android:background="@android:color/holo_green_light"
+        android:layout_marginEnd="32dp"
+        android:layout_marginStart="32dp"
+        android:background="@color/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/spinnerTo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -79,6 +83,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:text="From"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/spinnerFrom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
@@ -92,6 +97,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:text="To"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/spinnerTo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
