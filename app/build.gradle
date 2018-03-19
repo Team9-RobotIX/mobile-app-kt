@@ -28,7 +28,7 @@ repositories {
 
 kotlin {
     experimental {
-        coroutines 'enable'
+        coroutines "enable"
     }
 }
 

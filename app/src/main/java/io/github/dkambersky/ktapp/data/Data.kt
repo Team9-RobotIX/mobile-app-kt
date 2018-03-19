@@ -16,7 +16,7 @@ data class DeliveryTarget(val id: Int, val name: String = "Unnamed target") {
 }
 
 data class Delivery(
-        val description: String? = null,
+        val description: String? = "",
         val from: DeliveryTarget,
         val id: Int,
         val name: String,

@@ -19,10 +19,17 @@ import java.util.*
 class MainActivity : BaseActivity() {
 
     /* Delay in milliseconds between updates */
-    private val pollingDelay = 500L
+    private val pollingDelay = 400L
+
+    private val updatePausePeriod = 1000L
 
     private var deliveries = listOf<Delivery>()
     private var deliveriesShow = listOf<String>()
+
+    var updatesPaused = false
+
+    var updateTask: TimerTask? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,12 +38,20 @@ class MainActivity : BaseActivity() {
 
         buttonLogin.setOnClickListener {
             toggleVisibility(login_form)
-            toggleVisibility(deliveryPane)
+            toggleVisibility(deliveryPane, visible = login_form.visibility == View.GONE)
         }
         email_sign_in_button.setOnClickListener {
             toggleVisibility(login_form)
+
             if (!flobotApp.auth.loggedIn)
                 trySigningIn()
+
+
+            /* After login is done, try toggling */
+            launch {
+                Thread.sleep(pollingDelay)
+                runOnUiThread { toggleVisibility(deliveryPane, visible = login_form.visibility == View.GONE) }
+            }
 
         }
         buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
@@ -45,8 +60,23 @@ class MainActivity : BaseActivity() {
         /* Disable creating order and scanning w/o login */
         buttonCreateOrder.isEnabled = false
 
-
         authStatusText.text = flobotApp.auth.loggedInFriendlyText()
+
+
+        /* Pause updating if user touches carousel - not to yank state away when interacting */
+        val listViewTimer = Timer()
+        listViewOrders.setOnTouchListener { _, _ ->
+            updatesPaused = true
+            updateTask?.cancel()
+
+            updateTask = object : TimerTask() {
+                override fun run() {
+                    updatesPaused = false
+                }
+            }
+            listViewTimer.schedule(updateTask, updatePausePeriod)
+            false
+        }
 
 
         /* Schedule polling updates */
@@ -86,12 +116,10 @@ class MainActivity : BaseActivity() {
 
                     /* Inform the user */
                     showSnackbar("Logged in successfully!", Snackbar.LENGTH_LONG)
-
-
+                    
                     /* Enable user-dependent actions */
                     this@MainActivity.runOnUiThread {
                         buttonCreateOrder.isEnabled = true
-                        toggleVisibility(deliveryPane)
                     }
                 }
                 401 -> {
@@ -106,6 +134,7 @@ class MainActivity : BaseActivity() {
 
 
     private fun updateDeliveryList() {
+        if (updatesPaused) return
 
         var list = mutableListOf<Delivery>()
         try {

@@ -1,9 +1,12 @@
 package io.github.dkambersky.ktapp.activities
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.dkambersky.ktapp.R
@@ -27,8 +30,10 @@ class CreateOrderActivity : BaseActivity() {
         /* Listeners*/
         buttonSendOrder.setOnClickListener { println("Send pressed"); sendOrder() }
 
-        editTextName.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
-        editTextDescription.setOnFocusChangeListener { _, hasFocus -> if (!hasFocus) checkSendability() }
+
+        editTextName.afterTextChanged { checkSendability() }
+        editTextDescription.afterTextChanged { checkSendability() }
+
         spinnerTo.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
                 buttonSendOrder.isEnabled = false
@@ -56,9 +61,8 @@ class CreateOrderActivity : BaseActivity() {
 
     /* Disable Send Order button on invalid input */
     private fun checkSendability() {
-        println("checking sendability")
+        println("Checking sendability")
         buttonSendOrder.isEnabled =
-                editTextDescription.text.toString() != "" &&
                 editTextName.text.toString() != "" &&
                 ((spinnerFrom.selectedItem as DeliveryTarget).id !=
                         (spinnerTo.selectedItem as DeliveryTarget).id)
@@ -131,7 +135,19 @@ class CreateOrderActivity : BaseActivity() {
         }
     }
 
+    fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+        this.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
 
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun afterTextChanged(editable: Editable?) {
+                afterTextChanged.invoke(editable.toString())
+            }
+        })
+    }
 
 
 }

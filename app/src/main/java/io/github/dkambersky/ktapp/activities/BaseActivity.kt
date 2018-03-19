@@ -81,9 +81,15 @@ abstract class BaseActivity : AppCompatActivity() {
 
     }
 
-    protected fun toggleVisibility(vararg views: View) {
+    protected fun toggleVisibility(vararg views: View, visible: Boolean? = null) {
+        if (visible != null) {
+            views.forEach { it.visibility = if (visible) View.VISIBLE else View.GONE }
+            return
+        }
+
         views.forEach { it.visibility = if (it.visibility == View.GONE) View.VISIBLE else View.GONE }
     }
+
 
     protected fun hideKeyboardFrom(view: View) {
         val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
