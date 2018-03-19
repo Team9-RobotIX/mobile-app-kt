@@ -19,7 +19,7 @@ import java.util.*
 class MainActivity : BaseActivity() {
 
     /* Delay in milliseconds between updates */
-    private val pollingDelay = 500L
+    private val pollingDelay = 400L
 
     private var deliveries = listOf<Delivery>()
     private var deliveriesShow = listOf<String>()
@@ -31,7 +31,7 @@ class MainActivity : BaseActivity() {
 
         buttonLogin.setOnClickListener {
             toggleVisibility(login_form)
-            toggleVisibility(deliveryPane)
+            toggleVisibility(deliveryPane, visible = login_form.visibility == View.GONE)
         }
         email_sign_in_button.setOnClickListener {
             toggleVisibility(login_form)
