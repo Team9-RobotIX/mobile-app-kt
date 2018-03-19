@@ -5,7 +5,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.view.View.GONE
 import android.widget.Toast
 import io.github.dkambersky.ktapp.R
 import io.github.dkambersky.ktapp.util.BaseScannerViewEventListener
@@ -20,7 +19,7 @@ import java.util.*
 class TrackOrderActivity : BaseActivity() {
 
     /* Delay in milliseconds between updates */
-    private val pollingDelay = 500L
+    private val pollingDelay = 400L
 
     /* The order we're tracking */
     lateinit var order: JSONObject
@@ -36,10 +35,7 @@ class TrackOrderActivity : BaseActivity() {
         b_confirmRetrieve.setOnClickListener { confirmPackageRetrieved() }
 
         /* Hide situational UI elements */
-        toggleVisibility(b_verify)
-        toggleVisibility(b_confirmLoad)
-        toggleVisibility(b_confirmRetrieve)
-        toggleVisibility(scanview)
+        toggleVisibility(b_verify, b_confirmLoad, b_confirmRetrieve, scanview, visible = false)
 
 
         updateOrderState(JSONObject(intent.extras["order"] as String))
@@ -58,11 +54,18 @@ class TrackOrderActivity : BaseActivity() {
 
     private fun updateOrderState(order: JSONObject) {
         runOnUiThread {
-            switchState(order.optString("state"))
+            val needsUpdate = !this::order.isInitialized || this.order.getString("state") == order.getString("state")
             this.order = order
+
+            if (needsUpdate)
+                switchState(order.optString("state"))
+
+
             try {
                 track_title_num.text = order.getInt("id").toString()
             } catch (e: Exception) {
+                System.err.println("Error! ${e.localizedMessage}")
+                e.printStackTrace()
                 Toast.makeText(this, "Delivery completed!", Toast.LENGTH_LONG).show()
                 transition(MainActivity::class.java)
             }
@@ -71,52 +74,45 @@ class TrackOrderActivity : BaseActivity() {
 
 
     private fun switchState(state: String) {
-        if (state == "") return
-
-        /* Handle first run */
-        if (!this::order.isInitialized) {
-            track_state.text = state
-        }
-
-        /* Don't switch if already in a state */
-        if (this::order.isInitialized && state == order.getString("state"))
-            return
-
         track_state.text = state
 
         when (state) {
-            "AWAITING_AUTHENTICATION_SENDER", "AWAITING_AUTHENTICATION_RECEIVER" -> {
-                /* Display QR code challenge */
-                toggleVisibility(b_verify)
+            "AWAITING_AUTHENTICATION_SENDER" -> {
+                /* If user is the sender, display QR code challenge */
+                if (flobotApp.auth.name == order.getString("sender")) {
+
+                    toggleVisibility(trackInteractiveParts, b_verify, visible = true)
+                }
+            }
+            "AWAITING_AUTHENTICATION_RECEIVER" -> {
+                if (flobotApp.auth.name == order.getString("receiver")) {
+                    /* Display QR code challenge */
+                    toggleVisibility(trackInteractiveParts, b_verify, visible = true)
+                }
             }
             "AWAITING_PACKAGE_LOAD" -> {
                 if (flobotApp.auth.name == order.getString("sender")) {
                     /* Verification passed - hide verification UI */
-                    toggleVisibility(scanview)
+                    toggleVisibility(scanview, visible = false)
 
                     /* Allow user to indicate package has been loaded */
-                    toggleVisibility(b_confirmLoad)
+                    toggleVisibility(trackInteractiveParts, b_confirmLoad, visible = true)
                 }
             }
             "AWAITING_PACKAGE_RETRIEVAL" -> {
                 if (flobotApp.auth.name == order.getString("receiver")) {
                     /* Verification passed - hide verification UI */
-                    toggleVisibility(scanview)
+                    toggleVisibility(scanview, visible = false)
 
                     /* Allow user to indicate package has been loaded */
-                    toggleVisibility(b_confirmRetrieve)
+                    toggleVisibility(trackInteractiveParts, b_confirmRetrieve, visible = true)
                 }
             }
 
 
-            "PACKAGE_LOAD_COMPLETE", "MOVING_TO_DESTINATION" -> {
-                /* The sender's work is done - hide the functional parts,
-                   just track delivery's state. */
-                toggleVisibility(trackInteractiveParts)
-            }
-
             else -> {
-                trackInteractiveParts.visibility = GONE
+                /* Not in an interactive state - just track the order. */
+                toggleVisibility(trackInteractiveParts, visible = false)
             }
 
         }
