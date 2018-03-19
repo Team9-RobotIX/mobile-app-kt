@@ -42,8 +42,16 @@ class MainActivity : BaseActivity() {
         }
         email_sign_in_button.setOnClickListener {
             toggleVisibility(login_form)
+
             if (!flobotApp.auth.loggedIn)
                 trySigningIn()
+
+
+            /* After login is done, try toggling */
+            launch {
+                Thread.sleep(pollingDelay)
+                runOnUiThread { toggleVisibility(deliveryPane, visible = login_form.visibility == View.GONE) }
+            }
 
         }
         buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
@@ -108,12 +116,10 @@ class MainActivity : BaseActivity() {
 
                     /* Inform the user */
                     showSnackbar("Logged in successfully!", Snackbar.LENGTH_LONG)
-
-
+                    
                     /* Enable user-dependent actions */
                     this@MainActivity.runOnUiThread {
                         buttonCreateOrder.isEnabled = true
-                        toggleVisibility(deliveryPane)
                     }
                 }
                 401 -> {
