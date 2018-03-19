@@ -21,8 +21,15 @@ class MainActivity : BaseActivity() {
     /* Delay in milliseconds between updates */
     private val pollingDelay = 400L
 
+    private val updatePausePeriod = 1000L
+
     private var deliveries = listOf<Delivery>()
     private var deliveriesShow = listOf<String>()
+
+    var updatesPaused = false
+
+    var updateTask: TimerTask? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,8 +52,23 @@ class MainActivity : BaseActivity() {
         /* Disable creating order and scanning w/o login */
         buttonCreateOrder.isEnabled = false
 
-
         authStatusText.text = flobotApp.auth.loggedInFriendlyText()
+
+
+        /* Pause updating if user touches carousel - not to yank state away when interacting */
+        val listViewTimer = Timer()
+        listViewOrders.setOnTouchListener { _, _ ->
+            updatesPaused = true
+            updateTask?.cancel()
+
+            updateTask = object : TimerTask() {
+                override fun run() {
+                    updatesPaused = false
+                }
+            }
+            listViewTimer.schedule(updateTask, updatePausePeriod)
+            false
+        }
 
 
         /* Schedule polling updates */
@@ -106,6 +128,7 @@ class MainActivity : BaseActivity() {
 
 
     private fun updateDeliveryList() {
+        if (updatesPaused) return
 
         var list = mutableListOf<Delivery>()
         try {
