@@ -10,39 +10,39 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:layout_height="wrap_content"
-        android:text="@string/flobot_app"
-        android:textSize="60sp"
         android:fontFamily="sans-serif-medium"
+        android:text="@string/flobot_app"
         android:textColor="@color/colorWhite"
+        android:textSize="60sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="163dp"
         tools:layout_editor_absoluteY="38dp" />
 
     <ImageView
+        android:id="@+id/doctorclip"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:id="@+id/doctorclip"
-        android:src="@mipmap/doctorclip"
         android:layout_marginTop="10dp"
         android:background="@drawable/borderclip"
-        app:layout_constraintTop_toBottomOf="@id/textView"
+        android:src="@mipmap/doctorclip"
+        app:layout_constraintLeft_toLeftOf="@id/login_form"
         app:layout_constraintRight_toRightOf="@id/login_form"
-        app:layout_constraintLeft_toLeftOf="@id/login_form"/>
+        app:layout_constraintTop_toBottomOf="@id/textView" />
 
     <ScrollView
-        android:background="@drawable/border"
         android:id="@+id/login_form"
         android:layout_width="300dp"
         android:layout_height="260dp"
         android:layout_marginBottom="8dp"
+        android:background="@drawable/border"
         android:visibility="visible"
-        app:layout_constraintTop_toBottomOf="@id/doctorclip"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/doctorclip"
         app:layout_constraintVertical_bias="0.659">
 
         <LinearLayout
@@ -54,9 +54,9 @@
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:background="@drawable/rounded_corner"
-                android:layout_height="wrap_content">
+                android:background="@drawable/rounded_corner">
 
                 <AutoCompleteTextView
                     android:id="@+id/name"
@@ -93,17 +93,40 @@
                 android:id="@+id/email_sign_in_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
-                android:layout_margin="10dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:layout_marginTop="16dp"
                 android:background="@drawable/button_shape"
                 android:shadowColor="#A8A8A8"
+                android:text="@string/action_sign_in"
                 android:textColor="@color/colorWhite"
                 android:textSize="20sp"
-                android:layout_marginTop="16dp"
-                android:text="@string/action_sign_in"
                 android:textStyle="bold" />
 
         </LinearLayout>
     </ScrollView>
+
+    <Button
+        android:id="@+id/prefs_button"
+        style="?android:textAppearanceSmall"
+        android:layout_width="76dp"
+        android:layout_height="40dp"
+        android:layout_margin="10dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_shape"
+        android:shadowColor="#A8A8A8"
+        android:text="Settings"
+        android:textColor="@color/colorWhite"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.972"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
 </android.support.constraint.ConstraintLayout>

@@ -29,10 +29,18 @@ class MainActivity : BaseActivity() {
     private var updateTask: TimerTask? = null
 
 
+    override fun onResume() {
+        super.onResume()
+        flobotApp.loadUrl()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        flobotApp.loadUrl()
+//        launch { Thread.sleep(1000); transition(SettingsActivity::class.java) }
 
         buttonCreateOrder.setOnClickListener { transition(CreateOrderActivity::class.java) }
 

@@ -63,7 +63,7 @@ class TrackOrderActivity : BaseActivity() {
 
             if (needsUpdate)
                 switchState(order.optString("state"))
-            
+
             try {
                 track_title_num.text = order.getInt("id").toString()
             } catch (e: Exception) {

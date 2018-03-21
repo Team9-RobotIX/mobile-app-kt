@@ -2,6 +2,7 @@ package io.github.dkambersky.ktapp.activities
 
 import android.os.Bundle
 import android.support.design.widget.Snackbar
+import io.github.dkambersky.ktapp.FlobotApplication
 import io.github.dkambersky.ktapp.R
 import khttp.post
 import kotlinx.android.synthetic.main.activity_login.*
@@ -13,7 +14,16 @@ class LoginActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        /* Load URL from prefs when app instantiated */
+        (application as FlobotApplication).loadUrl()
+
         email_sign_in_button.setOnClickListener { trySigningIn() }
+        prefs_button.setOnClickListener { transition(SettingsActivity::class.java) }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        (application as FlobotApplication).loadUrl()
     }
 
 
