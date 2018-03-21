@@ -9,6 +9,7 @@ import android.widget.Toast
 import io.github.dkambersky.ktapp.R
 import io.github.dkambersky.ktapp.util.BaseScannerViewEventListener
 import khttp.async
+import khttp.delete
 import khttp.get
 import khttp.patch
 import kotlinx.android.synthetic.main.activity_track_order.*
@@ -33,6 +34,7 @@ class TrackOrderActivity : BaseActivity() {
         b_verify.setOnClickListener { initializeScanner() }
         b_confirmLoad.setOnClickListener { confirmPackageLoaded() }
         b_confirmRetrieve.setOnClickListener { confirmPackageRetrieved() }
+        b_cancel.setOnClickListener { cancelDelivery() }
 
         /* Hide situational UI elements */
         toggleVisibility(b_verify, b_confirmLoad, b_confirmRetrieve, scanview, visible = false)
@@ -45,7 +47,9 @@ class TrackOrderActivity : BaseActivity() {
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 launch {
-                    updateOrderState(get("${flobotApp.serverUrl}/delivery/${order.getInt("id")}").jsonObject)
+                    val orderResponse = get("${flobotApp.serverUrl}/delivery/${order.getInt("id")}")
+                    if (orderResponse.statusCode == 200)
+                        updateOrderState(orderResponse.jsonObject)
                 }
             }
         }, pollingDelay, pollingDelay)
@@ -54,13 +58,12 @@ class TrackOrderActivity : BaseActivity() {
 
     private fun updateOrderState(order: JSONObject) {
         runOnUiThread {
-            val needsUpdate = !this::order.isInitialized || this.order.getString("state") == order.getString("state")
+            val needsUpdate = !this::order.isInitialized || this.order.getString("state") != order.getString("state")
             this.order = order
 
             if (needsUpdate)
                 switchState(order.optString("state"))
-
-
+            
             try {
                 track_title_num.text = order.getInt("id").toString()
             } catch (e: Exception) {
@@ -75,6 +78,7 @@ class TrackOrderActivity : BaseActivity() {
 
     private fun switchState(state: String) {
         track_state.text = state
+        println("Switching state to $state")
 
         when (state) {
             "AWAITING_AUTHENTICATION_SENDER" -> {
@@ -156,7 +160,7 @@ class TrackOrderActivity : BaseActivity() {
 
         /* Finally, show scanner */
         toggleVisibility(scanview)
-        toggleVisibility(b_verify)
+        toggleVisibility(b_verify, visible = false)
     }
 
     private fun confirmPackageLoaded() {
@@ -178,6 +182,18 @@ class TrackOrderActivity : BaseActivity() {
                     headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token}")
             )
             println("Confirmation status: ${resp.statusCode}, text: ${resp.text}")
+        }
+    }
+
+    private fun cancelDelivery() {
+        launch {
+            val resp = delete("${flobotApp.serverUrl}/delivery/${order.getInt("id")}",
+                    timeout = 1.0,
+                    headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token}")
+            )
+            println("Confirmation status: ${resp.statusCode}, text: ${resp.text}")
+            if (resp.statusCode == 200)
+                transition(MainActivity::class.java)
         }
     }
 
