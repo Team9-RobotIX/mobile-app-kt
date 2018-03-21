@@ -4,8 +4,6 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/FlobotApp.iml" filepath="$PROJECT_DIR$/FlobotApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/appsdp.iml" filepath="$PROJECT_DIR$/appsdp.iml" />
-      <module fileurl="file://D:\Code\Uni\sdp\FlobotApp\mobile-app-kt.iml" filepath="D:\Code\Uni\sdp\FlobotApp\mobile-app-kt.iml" />
     </modules>
   </component>
 </project>
