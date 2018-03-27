@@ -80,10 +80,15 @@ class MainActivity : BaseActivity() {
 
         var list = mutableListOf<Delivery>()
         try {
-            list = jacksonObjectMapper().readValue(get("${flobotApp.serverUrl}/deliveries").text)
+            val response = get("${flobotApp.serverUrl}/deliveries")
+
+            if (response.statusCode == 200) {
+                list = jacksonObjectMapper().readValue(response.text)
+            }
         } catch (e: Exception) {
             println("Something broke in parsing: ${e.printStackTrace()}")
         }
+
 
         runOnUiThread {
             deliveries = list.filter { it.sender == flobotApp.auth.name || it.receiver == flobotApp.auth.name }.toMutableList()
@@ -107,7 +112,6 @@ class MainActivity : BaseActivity() {
                     val resp = get("${flobotApp.serverUrl}/delivery/$orderId")
                     transition(TrackOrderActivity::class.java, "order" to resp.text)
                 }
-
 
             }
         }

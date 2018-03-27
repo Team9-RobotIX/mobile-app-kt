@@ -1,7 +1,6 @@
 package io.github.dkambersky.ktapp.activities
 
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import io.github.dkambersky.ktapp.FlobotApplication
 import io.github.dkambersky.ktapp.R
 import khttp.post
@@ -51,14 +50,11 @@ class LoginActivity : BaseActivity() {
                     flobotApp.auth.loggedIn = true
                     flobotApp.auth.token = token
 
-                    /* Inform the user */
-                    showSnackbar("Logged in successfully!", Snackbar.LENGTH_LONG)
-
                     /* Enable user-dependent actions */
                     transition(MainActivity::class.java)
                 }
                 401 -> {
-                    showSnackbar("Wrong username or password")
+                    showSnackbar("Wrong username or password.")
                 }
 
             }

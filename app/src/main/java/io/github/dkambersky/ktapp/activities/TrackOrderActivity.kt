@@ -138,7 +138,7 @@ class TrackOrderActivity : BaseActivity() {
                 Toast.makeText(this@TrackOrderActivity, "Scanned $data", Toast.LENGTH_SHORT).show()
                 launch {
 
-                    val url = "${flobotApp.serverUrl}/${order.getString("robot")}/verify"
+                    val url = "${flobotApp.serverUrl}/robot/${order.getString("robot")}/verify"
                     println("Sending verification to $url")
                     async.post(
                             url,

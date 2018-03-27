@@ -62,6 +62,15 @@ class CreateOrderActivity : BaseActivity() {
     /* Disable Send Order button on invalid input */
     private fun checkSendability() {
         println("Checking sendability")
+
+
+        /* Return early if missing targets */
+        if (spinnerFrom.selectedItem == null || spinnerTo.selectedItem == null) {
+            buttonSendOrder.isEnabled = false
+            return
+        }
+
+
         buttonSendOrder.isEnabled =
                 editTextName.text.toString() != "" &&
                 ((spinnerFrom.selectedItem as DeliveryTarget).id !=
