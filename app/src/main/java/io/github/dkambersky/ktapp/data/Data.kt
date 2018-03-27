@@ -20,6 +20,7 @@ data class Delivery(
         val from: DeliveryTarget,
         val id: Int,
         val name: String,
+        val robot: Int,
         val priority: Int,
         val receiver: String,
         val sender: String,

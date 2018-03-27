@@ -137,8 +137,11 @@ class TrackOrderActivity : BaseActivity() {
             override fun onCodeScanned(data: String) {
                 Toast.makeText(this@TrackOrderActivity, "Scanned $data", Toast.LENGTH_SHORT).show()
                 launch {
+
+                    val url = "${flobotApp.serverUrl}/${order.getString("robot")}/verify"
+                    println("Sending verification to $url")
                     async.post(
-                            flobotApp.serverUrl + "/verify",
+                            url,
                             json = mapOf("token" to data),
                             timeout = 1.0,
                             headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token}")
