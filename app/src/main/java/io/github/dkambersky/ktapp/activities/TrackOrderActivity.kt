@@ -1,12 +1,14 @@
 package io.github.dkambersky.ktapp.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import io.github.dkambersky.ktapp.R
+import io.github.dkambersky.ktapp.data.prettyStringState
 import io.github.dkambersky.ktapp.util.BaseScannerViewEventListener
 import khttp.delete
 import kotlinx.android.synthetic.main.activity_track_order.*
@@ -53,6 +55,7 @@ class TrackOrderActivity : BaseActivity() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateOrderState(order: JSONObject) {
         runOnUiThread {
             val needsUpdate = !this::order.isInitialized || this.order.getString("state") != order.getString("state")
@@ -62,7 +65,9 @@ class TrackOrderActivity : BaseActivity() {
                 switchState(order.optString("state"))
 
             try {
-                track_title_num.text = order.getInt("id").toString()
+                track_title_num.text =
+                        order.getInt("id").toString() + ": ${order.getString("name")}"
+
             } catch (e: Exception) {
                 System.err.println("Error! ${e.localizedMessage}")
                 e.printStackTrace()
@@ -74,7 +79,7 @@ class TrackOrderActivity : BaseActivity() {
 
 
     private fun switchState(state: String) {
-        track_state.text = state
+        track_state.text = prettyStringState(state)
         println("Switching state to $state")
 
         when (state) {
@@ -119,6 +124,7 @@ class TrackOrderActivity : BaseActivity() {
         }
 
     }
+
 
     private fun initializeScanner() {
         /* Ensure we have camera permissions */
@@ -175,7 +181,7 @@ class TrackOrderActivity : BaseActivity() {
                     timeout = 1.0,
                     headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token}")
             )
-            
+
             if (resp != null)
                 println("Confirmation status: ${resp.statusCode}, text: ${resp.text}")
 

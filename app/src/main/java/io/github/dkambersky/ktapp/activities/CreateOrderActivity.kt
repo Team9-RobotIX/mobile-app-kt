@@ -103,7 +103,7 @@ class CreateOrderActivity : BaseActivity() {
                 for (i in 0 until (usersData.jsonArray.length())) {
                     /* Android boilerplate >.> */
                     users.add((usersData.jsonArray.getJSONObject(i).getString("username")))
-//                    println("i: $i, ${usersData.jsonArray.getJSONObject(i).getString("username")}")
+
                 }
             }
 

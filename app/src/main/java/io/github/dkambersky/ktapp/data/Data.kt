@@ -29,18 +29,34 @@ data class Delivery(
         val to: DeliveryTarget
 ) {
     fun prettyPrint(userName: String): String {
-        /* Recepient confirmation */
-        if (state == "AWAITING_AUTHENTICATION_RECEIVER") {
-            return "#$id - NEEDS CONFIRMATION - $name from $sender, $state"
-        }
-
-
         /* Normal behavior */
-        return if (userName == sender)
-            "#$id - outgoing - $name to $receiver, $state"
-        else
-            "#$id - incoming - $name from $sender, $state"
+        println("$sender, $receiver, $userName")
+        if (userName == sender) {
+            if (sender == receiver)
+                return "#$id - self-ordered - $name to $receiver, ${prettyStringState(state)}"
 
+            return "#$id - outgoing - $name to $receiver, ${prettyStringState(state)}"
+        } else
+            return "#$id - incoming - $name from $sender, ${prettyStringState(state)}"
+
+    }
+}
+
+
+fun prettyStringState(state: String): String {
+    return when (state) {
+        "IN_QUEUE" -> "In queue"
+        "MOVING_TO_SOURCE" -> "Moving to sender"
+        "AWAITING_AUTHENTICATION_SENDER" -> "Awaiting verification by sender"
+        "AWAITING_PACKAGE_LOAD" -> "Awaiting package load"
+        "PACKAGE_LOAD_COMPLETE" -> "Package loaded"
+        "MOVING_TO_DESTINATION" -> "Moving to recipient"
+        "AWAITING_AUTHENTICATION_RECEIVER" -> "Awaiting verification by recipient"
+        "AWAITING_PACKAGE_RETRIEVAL" -> "Awaiting package retrieval"
+        "PACKAGE_RETRIEVAL_COMPLETE" -> "Package retrieved"
+        "COMPLETE" -> "Complete"
+        "UNKNOWN" -> "Unknown"
+        else -> state
     }
 }
 
