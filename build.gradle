@@ -1,6 +1,6 @@
 /* Top-level build file */
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.31'
     repositories {
         google()
         jcenter()
