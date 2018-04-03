@@ -17,6 +17,6 @@ class FlobotApplication : Application() {
     val auth = AuthState()
     fun loadUrl() {
         val prefs = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        serverUrl = prefs.getString("serverUrl", "http://ec2-18-219-63-23.us-east-2.compute.amazonaws.com/development")
+        serverUrl = prefs.getString("serverUrl", "http://35.177.199.115/development")
     }
 }
