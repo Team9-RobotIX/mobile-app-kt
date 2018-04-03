@@ -1,5 +1,6 @@
 package io.github.dkambersky.ktapp.activities
 
+import android.R.layout.simple_spinner_dropdown_item
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -12,7 +13,6 @@ import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.dkambersky.ktapp.R
 import io.github.dkambersky.ktapp.data.DeliveryTarget
 import khttp.async
-import khttp.get
 import kotlinx.android.synthetic.main.activity_create_order.*
 import kotlinx.coroutines.experimental.launch
 
@@ -79,32 +79,37 @@ class CreateOrderActivity : BaseActivity() {
         println(buttonSendOrder.isEnabled)
     }
 
-    /* Fetch data about targets, populate dropdowns */
+    /* Fetch data about targets, populate drop-downs */
     private fun initializeSpinners() {
         launch {
             /* Haha, what is a pull parser?
              * This downloads, parses and assigns the array in 85 characters total.
              */
-            targets = jacksonObjectMapper().readValue(get(flobotApp.serverUrl + "/targets").text)
+            val targetsData = getOrSnack(flobotApp.serverUrl + "/targets")
+            if (targetsData != null)
+                targets = jacksonObjectMapper().readValue(targetsData.text)
 
-            val adapter = ArrayAdapter<DeliveryTarget>(
-                    applicationContext,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    targets
-
-            )
+            val adapter = ArrayAdapter<DeliveryTarget>(applicationContext, simple_spinner_dropdown_item, targets)
             this@CreateOrderActivity.runOnUiThread({ spinnerFrom.adapter = adapter; adapter.notifyDataSetChanged() })
 
-            /* A bit unclean
-                TODO clean up
-             */
-            val adapter2 = ArrayAdapter<DeliveryTarget>(
-                    applicationContext,
-                    android.R.layout.simple_spinner_dropdown_item,
-                    targets
-
-            )
+            val adapter2 = ArrayAdapter<DeliveryTarget>(applicationContext, simple_spinner_dropdown_item, targets)
             this@CreateOrderActivity.runOnUiThread({ spinnerTo.adapter = adapter2; adapter2.notifyDataSetChanged() })
+
+
+            val usersData = getOrSnack(flobotApp.serverUrl + "/users")
+            val users = mutableListOf<String>()
+
+            if (usersData?.jsonArray != null) {
+                for (i in 0 until (usersData.jsonArray.length())) {
+                    /* Android boilerplate >.> */
+                    users.add((usersData.jsonArray.getJSONObject(i).getString("username")))
+//                    println("i: $i, ${usersData.jsonArray.getJSONObject(i).getString("username")}")
+                }
+            }
+
+            val adapter3 = ArrayAdapter<String>(applicationContext, simple_spinner_dropdown_item, users)
+            this@CreateOrderActivity.runOnUiThread({ spinnerUser.adapter = adapter3; adapter3.notifyDataSetChanged() })
+
 
         }
     }
@@ -123,7 +128,7 @@ class CreateOrderActivity : BaseActivity() {
                             "from" to (spinnerFrom.selectedItem as DeliveryTarget).id,
                             "to" to (spinnerTo.selectedItem as DeliveryTarget).id,
                             "sender" to flobotApp.auth.name,
-                            "receiver" to "rms"
+                            "receiver" to spinnerUser.selectedItem as String
                     ),
                     timeout = 1.0,
                     headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token!!}")
@@ -144,7 +149,7 @@ class CreateOrderActivity : BaseActivity() {
         }
     }
 
-    fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
+    private fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
         this.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             }

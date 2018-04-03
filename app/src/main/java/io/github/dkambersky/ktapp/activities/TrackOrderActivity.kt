@@ -8,10 +8,7 @@ import android.support.v4.content.ContextCompat
 import android.widget.Toast
 import io.github.dkambersky.ktapp.R
 import io.github.dkambersky.ktapp.util.BaseScannerViewEventListener
-import khttp.async
 import khttp.delete
-import khttp.get
-import khttp.patch
 import kotlinx.android.synthetic.main.activity_track_order.*
 import kotlinx.coroutines.experimental.launch
 import org.json.JSONObject
@@ -47,8 +44,8 @@ class TrackOrderActivity : BaseActivity() {
         timer.scheduleAtFixedRate(object : TimerTask() {
             override fun run() {
                 launch {
-                    val orderResponse = get("${flobotApp.serverUrl}/delivery/${order.getInt("id")}")
-                    if (orderResponse.statusCode == 200)
+                    val orderResponse = getOrSnack("${flobotApp.serverUrl}/delivery/${order.getInt("id")}")
+                    if (orderResponse != null)
                         updateOrderState(orderResponse.jsonObject)
                 }
             }
@@ -138,19 +135,24 @@ class TrackOrderActivity : BaseActivity() {
                 Toast.makeText(this@TrackOrderActivity, "Scanned $data", Toast.LENGTH_SHORT).show()
                 launch {
 
+                    println("canary")
                     val url = "${flobotApp.serverUrl}/robot/${order.getString("robot")}/verify"
+                    println("canary2")
                     println("Sending verification to $url")
-                    async.post(
+
+
+                    /* This used to be async - TODO check if messed up*/
+                    val resp = postOrSnack(
                             url,
                             json = mapOf("token" to data),
                             timeout = 1.0,
                             headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token}")
                     )
-                    {
-                        if (statusCode == 200)
+                    if (resp != null) {
+                        if (resp.statusCode == 200)
                             println("Verification completed!")
                         else
-                            println("Error verifying!\n$statusCode $text")
+                            println("Error verifying!\n${resp.statusCode} ${resp.text}")
                     }
                     /* This might be more important than it looks - async weirdness */
                     println("Verification complete")
@@ -168,23 +170,27 @@ class TrackOrderActivity : BaseActivity() {
 
     private fun confirmPackageLoaded() {
         launch {
-            val resp = patch("${flobotApp.serverUrl}/delivery/${order.getInt("id")}",
+            val resp = patchOrSnack("${flobotApp.serverUrl}/delivery/${order.getInt("id")}",
                     json = mapOf("state" to "PACKAGE_LOAD_COMPLETE"),
                     timeout = 1.0,
                     headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token}")
             )
-            println("Confirmation status: ${resp.statusCode}, text: ${resp.text}")
+            
+            if (resp != null)
+                println("Confirmation status: ${resp.statusCode}, text: ${resp.text}")
+
         }
     }
 
     private fun confirmPackageRetrieved() {
         launch {
-            val resp = patch("${flobotApp.serverUrl}/delivery/${order.getInt("id")}",
+            val resp = patchOrSnack("${flobotApp.serverUrl}/delivery/${order.getInt("id")}",
                     json = mapOf("state" to "PACKAGE_RETRIEVAL_COMPLETE"),
                     timeout = 1.0,
                     headers = mapOf("Authorization" to "Bearer ${flobotApp.auth.token}")
             )
-            println("Confirmation status: ${resp.statusCode}, text: ${resp.text}")
+            if (resp != null)
+                println("Confirmation status: ${resp.statusCode}, text: ${resp.text}")
         }
     }
 

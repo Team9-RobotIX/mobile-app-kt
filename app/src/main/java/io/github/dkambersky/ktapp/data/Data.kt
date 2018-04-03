@@ -11,9 +11,10 @@ data class AuthState(var token: String? = null, var name: String? = null, var lo
                 "Not logged in"
 }
 
-data class DeliveryTarget(val id: Int, val name: String = "Unnamed target") {
+data class DeliveryTarget(val id: Int, val name: String = "Unnamed target", val description: String? = "", val color: String? = "") {
     override fun toString() = name
 }
+
 
 data class Delivery(
         val description: String? = "",

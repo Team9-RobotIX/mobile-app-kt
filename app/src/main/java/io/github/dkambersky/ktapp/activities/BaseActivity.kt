@@ -11,7 +11,12 @@ import android.view.Window
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import io.github.dkambersky.ktapp.FlobotApplication
+import khttp.DEFAULT_TIMEOUT
+import khttp.responses.Response
+import khttp.structures.authorization.Authorization
+import khttp.structures.files.FileLike
 import java.io.Serializable
+import java.net.SocketTimeoutException
 
 
 /**
@@ -94,6 +99,68 @@ abstract class BaseActivity : AppCompatActivity() {
     protected fun hideKeyboardFrom(view: View) {
         val imm = this.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+
+    /* Communication boilerplate */
+    protected fun getOrSnack(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response? {
+        return handleHttpResponse(
+                try {
+                    khttp.get(url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
+                } catch (e: Exception) {
+                    if (e is SocketTimeoutException) {
+                        runOnUiThread { showSnackbar("Connection timed out!") }
+                    }
+                    e.printStackTrace()
+                    null
+                }
+        )
+    }
+
+    protected fun postOrSnack(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response? {
+        return handleHttpResponse(
+                try {
+                    khttp.post(url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
+                } catch (e: Exception) {
+                    if (e is SocketTimeoutException) {
+                        runOnUiThread { showSnackbar("Connection timed out!") }
+                    }
+                    e.printStackTrace()
+                    null
+                }, true
+        )
+    }
+
+
+    protected fun patchOrSnack(url: String, headers: Map<String, String?> = mapOf(), params: Map<String, String> = mapOf(), data: Any? = null, json: Any? = null, auth: Authorization? = null, cookies: Map<String, String>? = null, timeout: Double = DEFAULT_TIMEOUT, allowRedirects: Boolean? = null, stream: Boolean = false, files: List<FileLike> = listOf()): Response? {
+        return handleHttpResponse(
+                try {
+                    khttp.patch(url, headers, params, data, json, auth, cookies, timeout, allowRedirects, stream, files)
+                } catch (e: Exception) {
+                    if (e is SocketTimeoutException) {
+                        runOnUiThread { showSnackbar("Connection timed out!") }
+                    }
+                    e.printStackTrace()
+                    null
+                }
+        )
+
+    }
+
+    private fun handleHttpResponse(response: Response?, debug: Boolean = false): Response? {
+        if (debug)
+            println("Handling http response: $response \n ${response?.text}")
+        return when (response?.statusCode) {
+            null -> null
+            200 -> response
+            else -> {
+                val message = "Error ${response.statusCode}: ${response.jsonObject.getString("error")}\n${response.jsonObject.getString("friendly")}"
+
+                runOnUiThread { showSnackbar(message) }
+                println(message)
+                null
+            }
+        }
     }
 
 

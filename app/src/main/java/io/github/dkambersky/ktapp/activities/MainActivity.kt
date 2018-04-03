@@ -8,7 +8,6 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.github.dkambersky.ktapp.R
 import io.github.dkambersky.ktapp.data.Delivery
-import khttp.get
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.experimental.launch
 import java.util.*
@@ -80,9 +79,8 @@ class MainActivity : BaseActivity() {
 
         var list = mutableListOf<Delivery>()
         try {
-            val response = get("${flobotApp.serverUrl}/deliveries")
-
-            if (response.statusCode == 200) {
+            val response = getOrSnack("${flobotApp.serverUrl}/deliveries")
+            if (response != null) {
                 list = jacksonObjectMapper().readValue(response.text)
             }
         } catch (e: Exception) {
@@ -109,8 +107,9 @@ class MainActivity : BaseActivity() {
 
                 /* Asynchronously transition to tracking state*/
                 launch {
-                    val resp = get("${flobotApp.serverUrl}/delivery/$orderId")
-                    transition(TrackOrderActivity::class.java, "order" to resp.text)
+                    val resp = getOrSnack("${flobotApp.serverUrl}/delivery/$orderId")
+                    if (resp != null)
+                        transition(TrackOrderActivity::class.java, "order" to resp.text)
                 }
 
             }
