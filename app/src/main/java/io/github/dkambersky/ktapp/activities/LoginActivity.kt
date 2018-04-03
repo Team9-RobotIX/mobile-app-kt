@@ -3,9 +3,9 @@ package io.github.dkambersky.ktapp.activities
 import android.os.Bundle
 import io.github.dkambersky.ktapp.FlobotApplication
 import io.github.dkambersky.ktapp.R
-import khttp.post
 import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.coroutines.experimental.launch
+
 
 class LoginActivity : BaseActivity() {
 
@@ -18,6 +18,9 @@ class LoginActivity : BaseActivity() {
 
         email_sign_in_button.setOnClickListener { trySigningIn() }
         prefs_button.setOnClickListener { transition(SettingsActivity::class.java) }
+
+        /* Disable scroll? */
+        login_form.setOnTouchListener { _, _ -> true }
     }
 
     override fun onResume() {
@@ -33,34 +36,28 @@ class LoginActivity : BaseActivity() {
 
         launch {
             val uName = name.text.toString()
-            val response = post(flobotApp.serverUrl + "/login",
+            val response = postOrSnack(flobotApp.serverUrl + "/login",
                     json = mapOf(
                             "username" to uName,
                             "password" to password.text.toString()
                     )
             )
 
-            when (response.statusCode) {
-                200 -> {
-                    /* Extract bearer token */
-                    val token = response.jsonObject.get("bearer") as String
+            if (response != null) {
+                /* Extract bearer token */
+                val token = response.jsonObject.get("bearer") as String
 
-                    /* Save login data */
-                    flobotApp.auth.name = uName
-                    flobotApp.auth.loggedIn = true
-                    flobotApp.auth.token = token
+                /* Save login data */
+                flobotApp.auth.name = uName
+                flobotApp.auth.loggedIn = true
+                flobotApp.auth.token = token
 
-                    /* Enable user-dependent actions */
-                    transition(MainActivity::class.java)
-                }
-                401 -> {
-                    showSnackbar("Wrong username or password.")
-                }
-
+                /* Enable user-dependent actions */
+                transition(MainActivity::class.java)
             }
-
-
         }
-    }
 
+
+    }
 }
+
